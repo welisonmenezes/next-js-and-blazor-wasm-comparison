@@ -1,4 +1,8 @@
 using Crypto.Blazor.Shared.State;
+using Microsoft.AspNetCore.Localization;
+
+var supportedCultures = new[] { "en", "es", "pt" };
+string defaultCulture = supportedCultures[2];
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,15 +32,14 @@ app.UseHttpsRedirection();
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
-app.UseRouting();
-
-var supportedCultures = new[] { "en", "es", "pt" };
 var localizationOptions = new RequestLocalizationOptions()
-    .SetDefaultCulture(supportedCultures[2])
+    .SetDefaultCulture(defaultCulture)
     .AddSupportedCultures(supportedCultures)
     .AddSupportedUICultures(supportedCultures);
 
 app.UseRequestLocalization(localizationOptions);
+
+app.UseRouting();
 
 app.MapRazorPages();
 app.MapControllers();

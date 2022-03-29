@@ -52,7 +52,7 @@ window.blazorCulture = (function () {
         return ret;
     };
 
-    return {
+    const publicMethods = {
         get: () => {
             if (!window.localStorage) return "";
             return localStorage.getItem("BlazorCulture");
@@ -80,4 +80,6 @@ window.blazorCulture = (function () {
             }
         },
     };
+    
+    return publicMethods;
 })();
