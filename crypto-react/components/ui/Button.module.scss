@@ -1,0 +1,31 @@
+.button {
+    display: inline-block;
+    height: 62px;
+    line-height: 56px;
+    padding: 0 2rem;
+    text-align: center;
+    border-radius: 6px;
+    min-width: 300px;
+    font-size: 20px;
+    font-weight: 500;
+    border: solid 3px transparent;
+
+    &.default {
+        border-color: var(--clr-primary);
+        color: var(--clr-primary);
+        background-color: transparent;
+
+        &:hover {
+            color: white;
+            background-color: var(--clr-primary);
+        }
+    }
+}
+
+@media (max-width: 576px) {
+    .button {
+        display: block;
+        min-width: auto;
+        width: 100%;
+    }
+}

@@ -1,0 +1,97 @@
+<div class="LocaleSwitcher @GetIsOpenCssClass()">
+    <div class="selected stop-propagation" @onclick="HandleToggle">
+        <span class="element stop-propagation">
+            <img class="stop-propagation" src="@($"/img/icons/flag-{CurrentCulture}.svg")" alt="@CurrentCulture">
+            @CurrentCulture
+        </span>
+    </div>
+    <ul class="list @GetIsOpenCssClass()">
+        @foreach (string item in SupportedCultures)
+        {
+            @if (item != CurrentCulture)
+            {
+                <li>
+                    <span class="element" @onclick="@(() => { HandleSetLanguage(item); })">
+                        <img src="@($"/img/icons/flag-{item}.svg")" alt="@item">
+                        @item
+                    </span>
+                </li>
+            }
+        }
+    </ul>
+</div>
+
+@using System.Globalization
+@inject NavigationManager Nav
+@inject IJSRuntime JS
+@code {
+    public string[] SupportedCultures = new[] { "en", "es", "pt" };
+    private CultureInfo Culture { get; set; } = CultureInfo.CurrentCulture;
+    private string? CurrentCulture { get; set; }
+    private DotNetObjectReference<LocaleSwitcher>? ObjRef;
+    public bool IsOpen { get; set; } = false;
+
+    protected override void OnInitialized()
+    {
+        ObjRef = DotNetObjectReference.Create(this);
+        CurrentCulture = Culture.ToString();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                await JS.InvokeVoidAsync("HandleOnCloseLocaleSwitcher", ObjRef);
+            }
+            catch (System.Exception error)
+            {
+                System.Console.WriteLine(error);
+            }
+        }
+    }
+
+    public void HandleToggle()
+    {
+        IsOpen = !IsOpen;
+        StateHasChanged();
+    }
+
+    public void HandleSetLanguage(string lang)
+    {
+        SetCultureInfo(lang);
+    }
+
+    public string GetIsOpenCssClass()
+    {
+        return (IsOpen) ? "open" : "closed";
+    }
+
+    [JSInvokable]
+    public void HandleOnCloseLocalSwitcher()
+    {
+        IsOpen = false;
+        StateHasChanged();
+    }
+
+    public async void SetCultureInfo(string value)
+    {
+        var uri = new Uri(Nav.Uri).GetComponents(UriComponents.PathAndQuery, UriFormat.Unescaped);
+        CultureInfo newValue = new(value);
+        var cultureEscaped = Uri.EscapeDataString(newValue.Name);
+        var uriEscaped = Uri.EscapeDataString(uri);
+        CurrentCulture = value;
+        try
+        {
+            await JS.InvokeVoidAsync("blazorCulture.set", newValue.ToString());
+            await JS.InvokeVoidAsync("blazorCulture.setOnServer", $"Culture/Set?culture={cultureEscaped}");
+            await JS.InvokeVoidAsync("blazorCulture.pushOnRoute", newValue.ToString());
+            StateHasChanged();
+        }
+        catch (System.Exception error)
+        {
+            System.Console.WriteLine(error);
+        }
+    }
+}

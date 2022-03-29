@@ -1,0 +1,19 @@
+@page "/"
+@model _Host
+@using Microsoft.AspNetCore.Localization
+
+@{
+    Layout = "./Shared/_Layout.cshtml";
+}
+
+@section SEO { }
+
+@{
+    if (Model.Culture != null)
+    {
+        HttpContext.Response.Cookies.Append(
+            CookieRequestCultureProvider.DefaultCookieName,
+            CookieRequestCultureProvider.MakeCookieValue(
+                new RequestCulture(Model.Culture, Model.Culture)));
+    }
+}

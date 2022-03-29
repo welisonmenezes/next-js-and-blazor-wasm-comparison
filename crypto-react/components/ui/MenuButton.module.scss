@@ -1,0 +1,25 @@
+.button {
+    width: 50px;
+    height: 30px;
+    background-size: 45px;
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+    display: block;
+
+    &.default {
+        background-image: url(/icons/menu.svg);
+    }
+
+    &.white {
+        background-image: url(/icons/menu-white.svg);
+    }
+}
+
+@media (max-width: 768px) {
+    .button {
+        width: 40px;
+        height: 20px;
+        background-size: 35px;
+    }
+}

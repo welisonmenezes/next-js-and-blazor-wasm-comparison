@@ -1,0 +1,31 @@
+﻿@inherits LayoutComponentBase
+
+<div class="MainLayout">
+    <Header />
+    <Menu />
+    <main>
+        <div class="wrap">
+            <div>@Body</div>
+            <Footer />
+        </div>
+    </main>
+</div>
+<div class="FooterDetail"></div>
+
+@inject IJSRuntime JS
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {   
+        if (firstRender)
+        {
+            try
+            {
+                await JS.InvokeVoidAsync("HandleOnScroll");
+            }
+            catch (System.Exception error)
+            {
+                System.Console.WriteLine(error);
+            }
+        }
+    }
+}

@@ -1,0 +1,87 @@
+.Menu,
+.MenuBG {
+    width: 100%;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+}
+
+.Menu {
+    background-color: var(--clr-primary);
+    z-index: 101;
+    max-width: 600px;
+    min-width: 460px;
+    padding: 45px 20px 20px 20px;
+}
+
+.Menu.menu-closed {
+    right: -100%;
+}
+
+.Menu.menu-open {
+    right: 0;
+}
+
+.MenuBG {
+    left: 0;
+    background-color: black;
+    opacity: 0.3;
+    z-index: 100;
+}
+
+.MenuBG.menu-closed {
+    display: none;
+}
+
+.MenuBG.menu-open {
+    display: block;
+}
+
+.Menu .nav {
+    margin-top: 2rem;
+}
+
+.Menu .nav a {
+    color: white;
+    font-size: 22px;
+    font-weight: 500;
+    display: block;
+    padding: 1rem 2rem;
+    border-bottom: solid 1px rgba(255, 255, 255, .15);
+}
+
+.Menu .nav a:hover {
+    background-color: white;
+    color: var(--clr-primary);
+}
+
+@media (max-width: 1430px) {
+    .Menu {
+        width: 50%;
+    }
+}
+
+@media (max-width: 1150px) {
+    .Menu {
+        width: 60%;
+    }
+}
+
+@media (max-width: 950px) {
+    .Menu {
+        width: 70%;
+    }
+}
+
+@media (max-width: 768px) {
+    .Menu {
+        width: 100%;
+        min-width: auto;
+    }
+
+    .nav {
+        a {
+            font-size: 18px;
+        }
+    }
+}

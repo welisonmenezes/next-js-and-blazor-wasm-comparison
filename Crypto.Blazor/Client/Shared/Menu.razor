@@ -1,0 +1,56 @@
+<aside class="Menu nice-transition-all @GetIsMenuOpenCssClass()">
+    <MenuButton Modifier="white" OnClick="HandleOnCloseMenu" />
+    <nav class="nav">
+        <ul>
+            <li>
+                <a href="/" @onclick="HandleOnCloseMenu">Home</a>
+            </li>
+            <li>
+                <a href="/" @onclick="HandleOnCloseMenu">FAQ</a>
+            </li>
+            <li>
+                <a href="/" @onclick="HandleOnCloseMenu">Login</a>
+            </li>
+        </ul>
+    </nav>
+</aside>
+<div class="MenuBG @GetIsMenuOpenCssClass()" @onclick="HandleOnCloseMenu"></div>
+
+@implements IDisposable
+
+@code {
+    [Inject] public AppState? Context { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (Context != null) 
+        {
+            Context.IsMenuOpenEvent += StateHasChanged;
+        }
+    }
+
+    public void HandleOnCloseMenu()
+    {
+        if (Context != null) 
+        {
+            Context.SetIsMenuOpen(false);
+        }
+    }
+
+    public string GetIsMenuOpenCssClass()
+    {
+        if (Context != null) 
+        {
+            return (Context.IsMenuOpen) ? "menu-open" : "menu-closed";
+        }
+        return "menu-closed";
+    }
+
+    void IDisposable.Dispose()
+    {
+        if (Context != null) 
+        {
+            Context.IsMenuOpenEvent -= StateHasChanged;
+        }
+    }
+}

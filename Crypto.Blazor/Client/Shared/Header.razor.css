@@ -1,0 +1,56 @@
+.Header {
+    background-color: var(--clr-primary);
+    padding: 10px 10px 0 10px;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 99;
+    position: fixed;
+}
+
+.Header > div {
+    background-color: white;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    padding: 30px 10px 20px 10px;
+}
+
+.Header img {
+    width: 250px;
+    height: 55px;
+}
+
+.Header .wrap {
+    max-width: 1400px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 auto;
+}
+
+.Header .actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    position: relative;
+}
+
+.Header .actions ::deep > *:last-child {
+    margin-left: 1rem;
+}
+
+@media (max-width: 768px) {
+    .Header {
+        padding: 5px 5px 0 5px;
+    }
+
+    .Header img {
+        max-width: 180px;
+        height: auto;
+    }
+
+    .Header .actions ::deep > *:last-child {
+        margin-left: 0.25rem;
+    }
+}

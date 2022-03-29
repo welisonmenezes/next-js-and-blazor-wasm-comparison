@@ -1,0 +1,17 @@
+{
+    "en": {
+        "limits": "Bounds",
+        "taxs": "Fees and deadlines",
+        "terms": "Terms of use"
+    },
+    "es": {
+        "limits": "Límites",
+        "taxs": "Tarifas y plazos",
+        "terms": "Condiciones de uso"
+    },
+    "pt": {
+        "limits": "Limites",
+        "taxs": "Taxas e prazos",
+        "terms": "Termos de uso"
+    }
+}
