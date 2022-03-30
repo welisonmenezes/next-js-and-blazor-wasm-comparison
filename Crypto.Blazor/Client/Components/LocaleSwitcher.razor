@@ -82,11 +82,13 @@
         try
         {
             CultureInfo newValue = new(value);
+            await JS.InvokeVoidAsync("blazorCulture.set", newValue.ToString());
             string NewUri = await JS.InvokeAsync<string>("blazorCulture.getCurrentUri", newValue.ToString());
             var cultureEscaped = Uri.EscapeDataString(newValue.Name);
             var uriEscaped = Uri.EscapeDataString(NewUri);
             CurrentCulture = value;
-            Nav.NavigateTo($"Culture/Set?culture={cultureEscaped}&redirectUri={uriEscaped}", forceLoad: true);
+            //Nav.NavigateTo($"Culture/Set?culture={cultureEscaped}&redirectUri={uriEscaped}", forceLoad: true);
+            Nav.NavigateTo($"{NewUri}", forceLoad: true);
         }
         catch (System.Exception error)
         {

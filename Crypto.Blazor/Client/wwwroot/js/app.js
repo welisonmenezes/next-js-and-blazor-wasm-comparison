@@ -16,9 +16,7 @@ window.HandleOnScroll = function () {
 
 window.HandleOnCloseLocaleSwitcher = function (objRef) {
     const _HandleClose = function (event) {
-        if (event.target.classList.contains("stop-propagation")) {
-            return;
-        }
+        if (event.target.classList.contains("stop-propagation")) return;
         objRef.invokeMethodAsync("HandleOnCloseLocalSwitcher");
     };
     document.body.removeEventListener("click", _HandleClose);
@@ -27,63 +25,69 @@ window.HandleOnCloseLocaleSwitcher = function (objRef) {
 
 window.blazorCulture = (function () {
     const _GetNewQueriesString = function (culture) {
-        let ret = "";
-        let hasLang = false;
-
+        let result = "";
+        let hasCulture = false;
         let newQueryString = window.location.search.split("&").map((query) => {
             let newQuery = query.replace("?", "");
             if (newQuery.split("=")[0] === "culture") {
                 newQuery = "culture=" + culture;
-                hasLang = true;
+                hasCulture = true;
             }
             return newQuery;
         });
-
-        if (!hasLang) {
-            newQueryString.push("culture=" + culture);
-        }
-
+        if (!hasCulture) newQueryString.push("culture=" + culture);
         newQueryString = newQueryString.filter((query) => {
             return query !== "";
         });
-
-        ret = "?" + newQueryString.join("&");
-
-        return ret;
+        result = "?" + newQueryString.join("&");
+        return result;
     };
 
-    const _GetCookie = function (c_name) {
-        var i,
-            x,
-            y,
-            ARRcookies = document.cookie.split(";");
-
-        for (i = 0; i < ARRcookies.length; i++) {
-            x = ARRcookies[i].substr(0, ARRcookies[i].indexOf("="));
-            y = ARRcookies[i].substr(ARRcookies[i].indexOf("=") + 1);
-            x = x.replace(/^\s+|\s+$/g, "");
-
-            if (x == c_name) {
-                const result = decodeURI(y).split("|")[0].replace("c%3D", "");
-                return result;
-            }
-        }
-
-        return "";
+    const _GetQueryCulture = () => {
+        let queryCulture = "";
+        window.location.search.split("&").map((query) => {
+            const newQuery = query.replace("?", "");
+            const splited = newQuery.split("=");
+            if (splited[0] === "culture") queryCulture = splited[1];
+        });
+        return queryCulture;
     };
 
     return {
         get: () => {
-            return _GetCookie(".AspNetCore.Culture");
+            if (window.localStorage)
+                return window.localStorage.getItem("BlazorCulture");
+            return "";
+        },
+        set: (culture) => {
+            if (window.localStorage)
+                window.localStorage.setItem("BlazorCulture", culture);
         },
         getCurrentUri: (culture) => {
-            if (window.history.pushState) {
-                var newurl =
+            if (window.history)
+                return (newurl =
                     window.location.pathname +
                     _GetNewQueriesString(culture) +
-                    window.location.hash;
-                return newurl;
-            }
+                    window.location.hash);
+        },
+        haveToSetDefaultCulture: (supportedCulturesParam, defaultCulture) => {
+            const supportedCultures = JSON.parse(supportedCulturesParam);
+            const queryCulture = _GetQueryCulture();
+            const savedCulture = window.localStorage.getItem("BlazorCulture");
+            if (
+                (queryCulture === "" && savedCulture !== defaultCulture) ||
+                (queryCulture !== "" &&
+                    !supportedCultures.includes(queryCulture)) ||
+                (queryCulture !== "" && savedCulture != queryCulture)
+            )
+                return true;
+            return false;
+        },
+        getQueryCulture: (supportedCulturesParam) => {
+            const supportedCultures = JSON.parse(supportedCulturesParam);
+            const queryCulture = _GetQueryCulture();
+            if (!supportedCultures.includes(queryCulture)) return "";
+            return queryCulture;
         },
     };
 })();
