@@ -2,7 +2,7 @@
     <div class="selected stop-propagation" @onclick="HandleToggle">
         <span class="element stop-propagation">
             <img class="stop-propagation" src="@($"/img/icons/flag-{CurrentCulture}.svg")" alt="@CurrentCulture">
-            @CurrentCulture
+            @CurrentCulture - @Localizer["CurrentLanguage"]
         </span>
     </div>
     <ul class="list @GetIsOpenCssClass()">
@@ -24,6 +24,8 @@
 @using System.Globalization
 @inject NavigationManager Nav
 @inject IJSRuntime JS
+@inject IStringLocalizer<Resource> Localizer
+
 @code {
     public string[] SupportedCultures = new[] { "en", "es", "pt" };
     private CultureInfo Culture { get; set; } = CultureInfo.CurrentCulture;
@@ -77,17 +79,16 @@
 
     public async void SetCultureInfo(string value)
     {
-        var uri = new Uri(Nav.Uri).GetComponents(UriComponents.PathAndQuery, UriFormat.Unescaped);
-        CultureInfo newValue = new(value);
-        var cultureEscaped = Uri.EscapeDataString(newValue.Name);
-        var uriEscaped = Uri.EscapeDataString(uri);
-        CurrentCulture = value;
         try
         {
+            CultureInfo newValue = new(value);
             await JS.InvokeVoidAsync("blazorCulture.set", newValue.ToString());
-            await JS.InvokeVoidAsync("blazorCulture.setOnServer", $"Culture/Set?culture={cultureEscaped}");
-            await JS.InvokeVoidAsync("blazorCulture.pushOnRoute", newValue.ToString());
-            StateHasChanged();
+            string NewUri = await JS.InvokeAsync<string>("blazorCulture.getCurrentUri", newValue.ToString());
+            var cultureEscaped = Uri.EscapeDataString(newValue.Name);
+            var uriEscaped = Uri.EscapeDataString(NewUri);
+            CurrentCulture = value;
+            //Nav.NavigateTo($"Culture/Set?culture={cultureEscaped}&redirectUri={uriEscaped}", forceLoad: true);
+            Nav.NavigateTo($"{NewUri}", forceLoad: true);
         }
         catch (System.Exception error)
         {

@@ -16,9 +16,7 @@ window.HandleOnScroll = function () {
 
 window.HandleOnCloseLocaleSwitcher = function (objRef) {
     const _HandleClose = function (event) {
-        if (event.target.classList.contains("stop-propagation")) {
-            return;
-        }
+        if (event.target.classList.contains("stop-propagation")) return;
         objRef.invokeMethodAsync("HandleOnCloseLocalSwitcher");
     };
     document.body.removeEventListener("click", _HandleClose);
@@ -27,57 +25,69 @@ window.HandleOnCloseLocaleSwitcher = function (objRef) {
 
 window.blazorCulture = (function () {
     const _GetNewQueriesString = function (culture) {
-        let ret = "";
-        let hasLang = false;
-
+        let result = "";
+        let hasCulture = false;
         let newQueryString = window.location.search.split("&").map((query) => {
             let newQuery = query.replace("?", "");
             if (newQuery.split("=")[0] === "culture") {
                 newQuery = "culture=" + culture;
-                hasLang = true;
+                hasCulture = true;
             }
             return newQuery;
         });
-
-        if (!hasLang) {
-            newQueryString.push("culture=" + culture);
-        }
-
+        if (!hasCulture) newQueryString.push("culture=" + culture);
         newQueryString = newQueryString.filter((query) => {
             return query !== "";
         });
+        result = "?" + newQueryString.join("&");
+        return result;
+    };
 
-        ret = "?" + newQueryString.join("&");
-
-        return ret;
+    const _GetQueryCulture = () => {
+        let queryCulture = "";
+        window.location.search.split("&").map((query) => {
+            const newQuery = query.replace("?", "");
+            const splited = newQuery.split("=");
+            if (splited[0] === "culture") queryCulture = splited[1];
+        });
+        return queryCulture;
     };
 
     return {
         get: () => {
-            if (!window.localStorage) return "";
-            return localStorage.getItem("BlazorCulture");
+            if (window.localStorage)
+                return window.localStorage.getItem("BlazorCulture");
+            return "";
         },
         set: (culture) => {
-            if (window.localStorage) {
-                localStorage.setItem("BlazorCulture", culture);
-            }
+            if (window.localStorage)
+                window.localStorage.setItem("BlazorCulture", culture);
         },
-        setOnServer: (url) => {
-            if (window.fetch) {
-                fetch(url);
-            }
-        },
-        pushOnRoute: (culture) => {
-            if (window.history.pushState) {
-                var newurl =
-                    window.location.protocol +
-                    "//" +
-                    window.location.host +
+        getCurrentUri: (culture) => {
+            if (window.history)
+                return (newurl =
                     window.location.pathname +
                     _GetNewQueriesString(culture) +
-                    window.location.hash;
-                window.history.pushState({ path: newurl }, "", newurl);
-            }
+                    window.location.hash);
+        },
+        haveToSetDefaultCulture: (supportedCulturesParam, defaultCulture) => {
+            const supportedCultures = JSON.parse(supportedCulturesParam);
+            const queryCulture = _GetQueryCulture();
+            const savedCulture = window.localStorage.getItem("BlazorCulture");
+            if (
+                (queryCulture === "" && savedCulture !== defaultCulture) ||
+                (queryCulture !== "" &&
+                    !supportedCultures.includes(queryCulture)) ||
+                (queryCulture !== "" && savedCulture != queryCulture)
+            )
+                return true;
+            return false;
+        },
+        getQueryCulture: (supportedCulturesParam) => {
+            const supportedCultures = JSON.parse(supportedCulturesParam);
+            const queryCulture = _GetQueryCulture();
+            if (!supportedCultures.includes(queryCulture)) return "";
+            return queryCulture;
         },
     };
 })();
