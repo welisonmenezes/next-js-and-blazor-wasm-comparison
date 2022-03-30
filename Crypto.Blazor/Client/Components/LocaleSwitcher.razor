@@ -22,11 +22,10 @@
 </div>
 
 @using System.Globalization
-@using System.Reflection
-@using System.Resources
 @inject NavigationManager Nav
 @inject IJSRuntime JS
 @inject IStringLocalizer<Resource> Localizer
+
 @code {
     public string[] SupportedCultures = new[] { "en", "es", "pt" };
     private CultureInfo Culture { get; set; } = CultureInfo.CurrentCulture;
@@ -80,35 +79,14 @@
 
     public async void SetCultureInfo(string value)
     {
-        var uri = new Uri(Nav.Uri).GetComponents(UriComponents.PathAndQuery, UriFormat.Unescaped);
-        CultureInfo newValue = new(value);
-        var cultureEscaped = Uri.EscapeDataString(newValue.Name);
-        var uriEscaped = Uri.EscapeDataString(uri);
-        CurrentCulture = value;
-
-        //Localizer = new StringLocalizer<Resource>();
-
-        //ResourceManager rm = new ResourceManager("Resource.resx",  Assembly.GetExecutingAssembly());  
-        //ResourceManager rm = new ResourceManager("Crypto.Blazor.Client.Shared.ResourceFiles.Resource", Assembly.GetExecutingAssembly());  
-        //rm.ReleaseAllResources();
-        //ResourceSet? rm2 = rm?.GetResourceSet(newValue, true, true);
-        //var strTest = rm?.GetString("CurrentLanguage", newValue);
-        //System.Console.WriteLine(strTest);
-        //string strWebsite = rm.GetString("CurrentLanguage",CultureInfo.CurrentCulture);  
-        //string strName = rm.GetString("CurrentLanguage");
-
-        //System.Console.WriteLine(strWebsite);
-        //System.Console.WriteLine(strName);
-
-        
-
-
         try
         {
-            await JS.InvokeVoidAsync("blazorCulture.set", newValue.ToString());
-            await JS.InvokeVoidAsync("blazorCulture.setOnServer", $"Culture/Set?culture={cultureEscaped}");
-            await JS.InvokeVoidAsync("blazorCulture.pushOnRoute", newValue.ToString());
-            StateHasChanged();
+            CultureInfo newValue = new(value);
+            string NewUri = await JS.InvokeAsync<string>("blazorCulture.getCurrentUri", newValue.ToString());
+            var cultureEscaped = Uri.EscapeDataString(newValue.Name);
+            var uriEscaped = Uri.EscapeDataString(NewUri);
+            CurrentCulture = value;
+            Nav.NavigateTo($"Culture/Set?culture={cultureEscaped}&redirectUri={uriEscaped}", forceLoad: true);
         }
         catch (System.Exception error)
         {

@@ -2,9 +2,9 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 
 [Route("[controller]/[action]")]
-public class CutureController : Controller
+public class CultureController : Controller
 {
-    public IActionResult Set(string culture)
+    public IActionResult Set(string culture, string redirectUri)
     {
         if (culture != null)
         {
@@ -13,6 +13,6 @@ public class CutureController : Controller
                 CookieRequestCultureProvider.MakeCookieValue(
                     new RequestCulture(culture, culture)));
         }
-        return Ok("");
+        return LocalRedirect(redirectUri);
     }
 }

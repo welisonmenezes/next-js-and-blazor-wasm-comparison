@@ -1,8 +1,10 @@
+using System.Globalization;
+using System.Runtime.InteropServices;
 using Crypto.Blazor.Shared.State;
 using Microsoft.AspNetCore.Localization;
 
-var supportedCultures = new[] { "en", "es", "pt" };
-string defaultCulture = supportedCultures[2];
+var supportedCultures = new[] { "pt", "en", "es" };
+string defaultCulture = supportedCultures[0];
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +33,53 @@ app.UseHttpsRedirection();
 
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
+
+app.Use(async (context, next) =>
+{
+    Func<string, string> CleanCookie = (string cookie) =>
+    {
+        string[] subs = cookie.Split("=");
+        return subs[subs.Count() - 1];
+    };
+
+    Action<string> SetCookieAndRedirect = (string value) =>
+    {
+        context.Response.Cookies.Append(
+        CookieRequestCultureProvider.DefaultCookieName,
+        CookieRequestCultureProvider.MakeCookieValue(
+        new RequestCulture(value, value)));
+        context.Response.Redirect(context.Request.Path + context.Request.QueryString);
+    };
+
+    var cookie = context.Request.Cookies[".AspNetCore.Culture"];
+
+    if (string.IsNullOrEmpty(cookie) && string.IsNullOrEmpty(context.Request.Query["culture"]))
+    {
+        SetCookieAndRedirect(defaultCulture);
+    }
+    else if (string.IsNullOrEmpty(cookie) && !string.IsNullOrEmpty(context.Request.Query["culture"]))
+    {
+        SetCookieAndRedirect(context.Request.Query["culture"]);
+    }
+    else if (!string.IsNullOrEmpty(cookie) && cookie != null && !string.IsNullOrEmpty(context.Request.Query["culture"]))
+    {
+        string savedCulture = CleanCookie(cookie);
+        if (!string.IsNullOrEmpty(savedCulture) && savedCulture != context.Request.Query["culture"])
+        {
+            SetCookieAndRedirect(context.Request.Query["culture"]);
+        }
+    }
+    else if (!string.IsNullOrEmpty(cookie) && cookie != null && string.IsNullOrEmpty(context.Request.Query["culture"]))
+    {
+        string savedCulture = CleanCookie(cookie);
+        if (savedCulture != defaultCulture)
+        {
+            SetCookieAndRedirect(defaultCulture);
+        }
+    }
+
+    await next();
+});
 
 var localizationOptions = new RequestLocalizationOptions()
     .SetDefaultCulture(defaultCulture)

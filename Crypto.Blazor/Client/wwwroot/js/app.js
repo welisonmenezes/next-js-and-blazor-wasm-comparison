@@ -52,34 +52,38 @@ window.blazorCulture = (function () {
         return ret;
     };
 
-    const publicMethods = {
+    const _GetCookie = function (c_name) {
+        var i,
+            x,
+            y,
+            ARRcookies = document.cookie.split(";");
+
+        for (i = 0; i < ARRcookies.length; i++) {
+            x = ARRcookies[i].substr(0, ARRcookies[i].indexOf("="));
+            y = ARRcookies[i].substr(ARRcookies[i].indexOf("=") + 1);
+            x = x.replace(/^\s+|\s+$/g, "");
+
+            if (x == c_name) {
+                const result = decodeURI(y).split("|")[0].replace("c%3D", "");
+                return result;
+            }
+        }
+
+        return "";
+    };
+
+    return {
         get: () => {
-            if (!window.localStorage) return "";
-            return localStorage.getItem("BlazorCulture");
+            return _GetCookie(".AspNetCore.Culture");
         },
-        set: (culture) => {
-            if (window.localStorage) {
-                localStorage.setItem("BlazorCulture", culture);
-            }
-        },
-        setOnServer: (url) => {
-            if (window.fetch) {
-                fetch(url);
-            }
-        },
-        pushOnRoute: (culture) => {
+        getCurrentUri: (culture) => {
             if (window.history.pushState) {
                 var newurl =
-                    window.location.protocol +
-                    "//" +
-                    window.location.host +
                     window.location.pathname +
                     _GetNewQueriesString(culture) +
                     window.location.hash;
-                window.history.pushState({ path: newurl }, "", newurl);
+                return newurl;
             }
         },
     };
-    
-    return publicMethods;
 })();

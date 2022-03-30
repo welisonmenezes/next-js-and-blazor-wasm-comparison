@@ -20,7 +20,6 @@ var host = builder.Build();
 CultureInfo culture;
 var js = host.Services.GetRequiredService<IJSRuntime>();
 string definedCulture = await js.InvokeAsync<string>("blazorCulture.get");
-
 if (definedCulture != null && !string.IsNullOrEmpty(definedCulture))
 {
     culture = new CultureInfo(definedCulture);
@@ -28,7 +27,6 @@ if (definedCulture != null && !string.IsNullOrEmpty(definedCulture))
 else
 {
     culture = new CultureInfo("pt");
-    await js.InvokeVoidAsync("blazorCulture.set", "pt");
 }
 
 CultureInfo.DefaultThreadCurrentCulture = culture;
