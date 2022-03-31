@@ -1,0 +1,13 @@
+<li class="Currency">
+    <figure class="figure">
+        <img src="@IconUrl" alt="@Label">
+        <span>@Label</span>
+    </figure>
+    <span>@Price</span>
+</li>
+
+@code {
+    [Parameter] public string? IconUrl { get; set; } = default!;
+    [Parameter] public string? Label { get; set; } = default!;
+    [Parameter] public string? Price { get; set; } = default!;
+}

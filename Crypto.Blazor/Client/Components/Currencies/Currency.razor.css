@@ -1,0 +1,47 @@
+.Currency,
+.Currency .figure {
+    display: flex;
+    align-items: center;
+}
+
+.Currency {
+    border-bottom: solid 1px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+    justify-content: space-between;
+    font-size: 22px;
+    font-weight: 500;
+}
+
+.Currency > span {
+    color: var(--clr-text-secondary);
+}
+
+.Currency .figure {
+    justify-content: flex-start;
+}
+
+.Currency .figure img {
+    width: 48px;
+    height: 48px;
+}
+
+.Currency .figure > span {
+    display: block;
+    padding: 0 1rem;
+}
+
+@media (max-width: 768px) {
+    .Currency {
+        font-size: 18px;
+        padding: 1rem 0;
+    }
+
+    .Currency .figure img {
+        width: 32px;
+        height: 32px;
+    }
+
+    .Currency .figure > span {
+        padding: 0 0.5rem;
+    }
+}

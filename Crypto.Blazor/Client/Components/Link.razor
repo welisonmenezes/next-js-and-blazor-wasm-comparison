@@ -1,0 +1,60 @@
+<a href="@($"{ Href }{ GetCultureQueryString(IsUniqueQueryString) }")" target="@Target" @onclick="@(() => OnClick?.Invoke())">
+    @if (ChildContent != null) 
+    {
+        @ChildContent
+    }
+    else
+    {
+        @Label
+    }
+</a>
+
+@using System.Web
+@using System.Collections.Specialized
+@inject NavigationManager Nav
+
+@code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public string Label { get; set; } = default!;
+    [Parameter] public string Href { get; set; } = default!;
+    [Parameter] public string Target { get; set; } = "_self";
+    [Parameter] public Action? OnClick { get; set; }
+    [Parameter] public bool IsUniqueQueryString { get; set; } = true;
+    protected static NameValueCollection QueriesString { get; set; } = default!;
+    protected static string QueryStringKey = AppState.QueryStringKey;
+
+    protected override void OnInitialized()
+    {
+        QueriesString = HttpUtility.ParseQueryString(new Uri(Nav.Uri).Query);
+    }
+
+    protected static bool CheckIfHasCulture()
+    {
+        try
+        {
+            if (QueriesString[QueryStringKey] != null)
+            {
+                return true;
+            }
+        }
+        catch (System.Exception)
+        {
+            return false;
+        }
+        return false;
+    }
+
+    public static string GetCultureQueryString(bool IsUniqueQueryString = true)
+    {
+        if (CheckIfHasCulture())
+        {
+            string Sufix = $"{ QueryStringKey }={ QueriesString[QueryStringKey] }";
+            if (IsUniqueQueryString)
+            {
+                return $"?{ Sufix }";
+            }
+            return $"={ Sufix }";
+        }
+        return "";
+    }
+}

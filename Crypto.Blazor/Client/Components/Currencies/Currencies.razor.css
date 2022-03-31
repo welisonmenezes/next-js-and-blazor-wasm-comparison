@@ -1,0 +1,3 @@
+.Currencies ::deep li:last-child {
+    border-bottom: none;
+}

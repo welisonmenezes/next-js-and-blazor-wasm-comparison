@@ -26,12 +26,12 @@
     margin-right: 0;
 }
 
-.Footer .menu a {
+.Footer .menu ::deep a {
     color: var(--clr-primary);
     font-size: 16px;
 }
 
-.Footer .menu a:hover {
+.Footer .menu ::deep a:hover {
     text-decoration: underline;
 }
 
