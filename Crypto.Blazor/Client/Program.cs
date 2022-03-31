@@ -17,15 +17,16 @@ builder.Services.AddLocalization();
 
 var host = builder.Build();
 
-string[] supportedCultures = { "en", "es", "pt" };
-string defaultCulture = "pt";
+string[] supportedCultures = AppState.SupportedCultures;
+string defaultCulture = AppState.DefaultCulture;
 string serializedSupportedCultures = JsonSerializer.Serialize(supportedCultures);
 CultureInfo culture;
 
 var js = host.Services.GetRequiredService<IJSRuntime>();
-string definedCulture = await js.InvokeAsync<string>("blazorCulture.get");
-string queryCulture = await js.InvokeAsync<string>("blazorCulture.getQueryCulture", JsonSerializer.Serialize(supportedCultures));
-bool haveToSetDefaultCulture = await js.InvokeAsync<bool>("blazorCulture.haveToSetDefaultCulture", JsonSerializer.Serialize(supportedCultures), defaultCulture);
+await js.InvokeVoidAsync("BlazorCulture.config", AppState.QueryStringKey, AppState.LocalStorageKey);
+string definedCulture = await js.InvokeAsync<string>("BlazorCulture.get");
+string queryCulture = await js.InvokeAsync<string>("BlazorCulture.getQueryStringValue", JsonSerializer.Serialize(supportedCultures));
+bool haveToSetDefaultCulture = await js.InvokeAsync<bool>("BlazorCulture.haveToSetDefaultCulture", JsonSerializer.Serialize(supportedCultures), defaultCulture);
 
 if (definedCulture != null && !string.IsNullOrEmpty(definedCulture))
 {
@@ -33,12 +34,12 @@ if (definedCulture != null && !string.IsNullOrEmpty(definedCulture))
     {
         if (!string.IsNullOrEmpty(queryCulture) && queryCulture != definedCulture) {
             culture = new CultureInfo(queryCulture);
-            await js.InvokeAsync<string>("blazorCulture.set", queryCulture);
+            await js.InvokeAsync<string>("BlazorCulture.set", queryCulture);
         }
         else 
         {    
             culture = new CultureInfo(defaultCulture);
-            await js.InvokeAsync<string>("blazorCulture.set", defaultCulture);
+            await js.InvokeAsync<string>("BlazorCulture.set", defaultCulture);
         }
     }
     else 
@@ -49,7 +50,7 @@ if (definedCulture != null && !string.IsNullOrEmpty(definedCulture))
 else
 {
     culture = new CultureInfo(defaultCulture);
-    await js.InvokeAsync<string>("blazorCulture.set", defaultCulture);
+    await js.InvokeAsync<string>("BlazorCulture.set", defaultCulture);
 }
 
 CultureInfo.DefaultThreadCurrentCulture = culture;

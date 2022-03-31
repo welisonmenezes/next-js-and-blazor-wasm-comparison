@@ -23,19 +23,22 @@ window.HandleOnCloseLocaleSwitcher = function (objRef) {
     document.body.addEventListener("click", _HandleClose);
 };
 
-window.blazorCulture = (function () {
+window.BlazorCulture = (function () {
+    let QueryStringKey = "";
+    let LocalStorageKey = "";
+
     const _GetNewQueriesString = function (culture) {
         let result = "";
         let hasCulture = false;
         let newQueryString = window.location.search.split("&").map((query) => {
             let newQuery = query.replace("?", "");
-            if (newQuery.split("=")[0] === "culture") {
-                newQuery = "culture=" + culture;
+            if (newQuery.split("=")[0] === QueryStringKey) {
+                newQuery = `${QueryStringKey}=${culture}`;
                 hasCulture = true;
             }
             return newQuery;
         });
-        if (!hasCulture) newQueryString.push("culture=" + culture);
+        if (!hasCulture) newQueryString.push(`${QueryStringKey}=${culture}`);
         newQueryString = newQueryString.filter((query) => {
             return query !== "";
         });
@@ -43,25 +46,29 @@ window.blazorCulture = (function () {
         return result;
     };
 
-    const _GetQueryCulture = () => {
+    const _GetQueryStringValue = () => {
         let queryCulture = "";
         window.location.search.split("&").map((query) => {
             const newQuery = query.replace("?", "");
             const splited = newQuery.split("=");
-            if (splited[0] === "culture") queryCulture = splited[1];
+            if (splited[0] === QueryStringKey) queryCulture = splited[1];
         });
         return queryCulture;
     };
 
     return {
+        config: (queryStringKey, localStorageKey) => {
+            QueryStringKey = queryStringKey;
+            LocalStorageKey = localStorageKey;
+        },
         get: () => {
             if (window.localStorage)
-                return window.localStorage.getItem("BlazorCulture");
+                return window.localStorage.getItem(LocalStorageKey);
             return "";
         },
         set: (culture) => {
             if (window.localStorage)
-                window.localStorage.setItem("BlazorCulture", culture);
+                window.localStorage.setItem(LocalStorageKey, culture);
         },
         getCurrentUri: (culture) => {
             if (window.history)
@@ -72,8 +79,8 @@ window.blazorCulture = (function () {
         },
         haveToSetDefaultCulture: (supportedCulturesParam, defaultCulture) => {
             const supportedCultures = JSON.parse(supportedCulturesParam);
-            const queryCulture = _GetQueryCulture();
-            const savedCulture = window.localStorage.getItem("BlazorCulture");
+            const queryCulture = _GetQueryStringValue();
+            const savedCulture = window.localStorage.getItem(LocalStorageKey);
             if (
                 (queryCulture === "" && savedCulture !== defaultCulture) ||
                 (queryCulture !== "" &&
@@ -83,9 +90,9 @@ window.blazorCulture = (function () {
                 return true;
             return false;
         },
-        getQueryCulture: (supportedCulturesParam) => {
+        getQueryStringValue: (supportedCulturesParam) => {
             const supportedCultures = JSON.parse(supportedCulturesParam);
-            const queryCulture = _GetQueryCulture();
+            const queryCulture = _GetQueryStringValue();
             if (!supportedCultures.includes(queryCulture)) return "";
             return queryCulture;
         },

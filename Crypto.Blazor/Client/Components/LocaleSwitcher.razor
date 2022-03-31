@@ -27,7 +27,7 @@
 @inject IStringLocalizer<Resource> Localizer
 
 @code {
-    public string[] SupportedCultures = new[] { "en", "es", "pt" };
+    public string[] SupportedCultures = AppState.SupportedCultures;
     private CultureInfo Culture { get; set; } = CultureInfo.CurrentCulture;
     private string? CurrentCulture { get; set; }
     private DotNetObjectReference<LocaleSwitcher>? ObjRef;
@@ -82,12 +82,11 @@
         try
         {
             CultureInfo newValue = new(value);
-            await JS.InvokeVoidAsync("blazorCulture.set", newValue.ToString());
-            string NewUri = await JS.InvokeAsync<string>("blazorCulture.getCurrentUri", newValue.ToString());
+            await JS.InvokeVoidAsync("BlazorCulture.set", newValue.ToString());
+            string NewUri = await JS.InvokeAsync<string>("BlazorCulture.getCurrentUri", newValue.ToString());
             var cultureEscaped = Uri.EscapeDataString(newValue.Name);
             var uriEscaped = Uri.EscapeDataString(NewUri);
             CurrentCulture = value;
-            //Nav.NavigateTo($"Culture/Set?culture={cultureEscaped}&redirectUri={uriEscaped}", forceLoad: true);
             Nav.NavigateTo($"{NewUri}", forceLoad: true);
         }
         catch (System.Exception error)

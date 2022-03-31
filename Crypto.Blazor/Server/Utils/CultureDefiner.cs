@@ -1,23 +1,25 @@
 using System.Globalization;
+using Crypto.Blazor.Shared.State;
 
 public class CultureDefiner
 {
     public static void DefineCulture(HttpContext context)
     {
-        string[] suportedCultures = { "en", "es", "pt" };
-        string defaultCulture = "pt";
+        string[] suportedCultures = AppState.SupportedCultures;
+        string defaultCulture = AppState.DefaultCulture;
+        string queryStringKey = AppState.QueryStringKey;
 
-        if (!string.IsNullOrEmpty(context.Request.Query["culture"]))
+        if (!string.IsNullOrEmpty(context.Request.Query[queryStringKey]))
         {
-            if(!suportedCultures.Any(str => str == context.Request.Query["culture"]))
+            if(!suportedCultures.Any(str => str == context.Request.Query[queryStringKey]))
             {
                 CultureInfo.CurrentCulture = new CultureInfo(defaultCulture);
                 CultureInfo.CurrentUICulture = new CultureInfo(defaultCulture);
             }
             else
             {
-                CultureInfo.CurrentCulture = new CultureInfo(context.Request.Query["culture"]);
-                CultureInfo.CurrentUICulture = new CultureInfo(context.Request.Query["culture"]);
+                CultureInfo.CurrentCulture = new CultureInfo(context.Request.Query[queryStringKey]);
+                CultureInfo.CurrentUICulture = new CultureInfo(context.Request.Query[queryStringKey]);
             }
         }
         else

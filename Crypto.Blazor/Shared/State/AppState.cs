@@ -8,6 +8,10 @@ namespace Crypto.Blazor.Shared.State
         public bool IsScrolled { get; private set; } = false;
         public Action? IsMenuOpenEvent { get; set; }
         public Action? IsScrolledEvent { get; set; }
+        public static string[] SupportedCultures = { "en", "es", "pt" };
+        public static string DefaultCulture = "pt";
+        public static string QueryStringKey = "culture";
+        public static string LocalStorageKey = "BlazorCulture";
 
         public void SetIsMenuOpen(bool state) 
         {
