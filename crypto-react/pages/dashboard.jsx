@@ -2,7 +2,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import React, { useState, useCallback, useEffect } from "react";
 import Button from "../components/ui/Button";
-import Calculating from "../components/ui/Calculating";
+import Row from "../components/ui/Row";
 
 import styles from "./dashboard.module.scss";
 import content from "./dashboard.json";
@@ -14,6 +14,7 @@ export default function Home() {
     const total = 100000;
 
     const getRows = useCallback(() => {
+        console.time("Time of execution");
         var rows = [];
         for (var i = 0; i < total; i++) {
             rows.push(i + 1);
@@ -25,6 +26,10 @@ export default function Home() {
         setLoading(true);
         setRows(getRows());
     }, [getRows]);
+
+    const handleOnAfterRenderRow = () => {
+        console.timeEnd("Time of execution");
+    };
 
     useEffect(() => {
         if (rows.length === total) {
@@ -40,7 +45,7 @@ export default function Home() {
             </Head>
             <div className={styles.container}>
                 <h1>{content[locale].title}</h1>
-                {loading && <Calculating />}
+                {loading && <p>Calculating...</p>}
                 {!loading && rows.length <= 0 && (
                     <Button
                         type="button"
@@ -51,7 +56,12 @@ export default function Home() {
                 {!loading && rows.length > 0 && (
                     <div className={styles.result}>
                         {rows.map((row) => (
-                            <span key={row}>{row} </span>
+                            <Row
+                                key={row}
+                                index={row}
+                                total={total}
+                                onAfterRenderRow={handleOnAfterRenderRow}
+                            />
                         ))}
                     </div>
                 )}

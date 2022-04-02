@@ -1,5 +1,6 @@
-<a href="@($"{ Href }{ GetCultureQueryString(IsUniqueQueryString) }")" target="@Target" @onclick="@(() => OnClick?.Invoke())">
-    @if (ChildContent != null) 
+<a href="@($"{ Href }{ GetCultureQueryString(IsUniqueQueryString) }")" target="@Target"
+    @onclick="@(() => OnClick?.Invoke())">
+    @if (ChildContent != null)
     {
         @ChildContent
     }

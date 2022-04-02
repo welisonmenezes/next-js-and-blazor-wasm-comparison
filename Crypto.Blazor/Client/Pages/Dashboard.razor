@@ -1,5 +1,74 @@
 ﻿@page "/dashboard"
 
-<PageTitle>Dashboard</PageTitle>
+@* <PageTitle>Dashboard</PageTitle> *@
 
-<h1>Dashboard</h1>
+<div class="Dashboard">
+    <h1>Dashboard</h1>
+
+    @if (Loading)
+    {
+        <p>Calculating...</p>
+    }
+
+    @if (!Loading && Rows.Count() <= 0)
+    {
+        <Button Label="Executar teste" OnClick="HandleOnClick" />
+    }
+
+    @if (!Loading && Rows.Count() > 0) 
+    {
+        <div class="result">
+            @foreach (int row in Rows)
+            {
+                <Row Index="@(row)" Total="@Total" OnAfterShowRow="HandleOnAfterShowRow" />
+            }
+        </div>
+    }
+
+</div>
+
+@code {
+    public bool Loading { get; set; } = false;
+    public List<int> Rows { get; set; } = new List<int>();
+    protected int Total = 100000;
+    public long StartMS;
+    public long EndMS;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (Rows.Count() == Total && Loading == true)
+        {
+            Loading = false;
+            StateHasChanged();
+        }
+    }
+
+    public async void HandleOnClick()
+    {
+        Loading = true;
+        StateHasChanged();
+        await Task.Delay(1);
+        Rows = GetRows();
+        StateHasChanged();
+    }
+
+    public void HandleOnAfterShowRow(int index) 
+    {
+        EndMS = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+        System.Console.WriteLine($"Time of execution: { EndMS - StartMS }");
+    }
+
+    public List<int> GetRows()
+    {
+        StartMS = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+
+        List<int> rows = new List<int>();
+
+        for (int i = 0; i < Total; i++)
+        {
+            rows.Add(i + 1);
+        }
+
+        return rows;
+    } 
+}

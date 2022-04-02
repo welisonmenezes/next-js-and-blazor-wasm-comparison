@@ -1,0 +1,15 @@
+<span>@Index &nbsp;</span>
+
+@code {
+    [Parameter] public int Index { get; set; } = default!;
+    [Parameter] public int Total { get; set; } = default!;
+    [Parameter] public Action<int> OnAfterShowRow { get; set; } = default!;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender && Index == Total)
+        {
+            OnAfterShowRow?.Invoke(Index);
+        }
+    }
+}

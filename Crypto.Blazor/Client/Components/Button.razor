@@ -6,13 +6,12 @@
 }
 else 
 {
-    <button type="button" @onclick="@(() => OnClick?.Invoke())">
+    <button class="Button" type="button" @onclick="@(() => OnClick?.Invoke())">
         @Label
     </button>
 }
 
 @code {
-    [Parameter] public string Type { get; set; } = "link";
     [Parameter] public string Label { get; set; } = "";
     [Parameter] public string Href { get; set; } = "/";
     [Parameter] public Action? OnClick { get; set; }
