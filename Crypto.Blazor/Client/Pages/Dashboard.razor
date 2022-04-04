@@ -3,7 +3,7 @@
 @* <PageTitle>Dashboard</PageTitle> *@
 
 <div class="Dashboard">
-    <h1>Dashboard</h1>
+    <h1>Teste de carga</h1>
 
     @if (Loading)
     {
@@ -47,7 +47,7 @@
     {
         Loading = true;
         StateHasChanged();
-        await Task.Delay(1);
+        await Task.Delay(10);
         Rows = GetRows();
         StateHasChanged();
     }

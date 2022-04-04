@@ -4,6 +4,7 @@ using Crypto.Blazor.Shared.State;
 using System.Globalization;
 using Microsoft.JSInterop;
 using System.Text.Json;
+using Crypto.Blazor.Shared.Service;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 //builder.RootComponents.Add<App>("#app");
@@ -14,6 +15,11 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 builder.Services.AddSingleton<AppState>();
 
 builder.Services.AddLocalization();
+
+builder.Services.AddHttpClient<IMarketService, MarketService>(client =>
+{
+    client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
+});
 
 var host = builder.Build();
 

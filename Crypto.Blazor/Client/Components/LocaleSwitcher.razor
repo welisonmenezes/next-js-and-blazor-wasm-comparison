@@ -2,7 +2,8 @@
     <div class="selected stop-propagation" @onclick="HandleToggle">
         <span class="element stop-propagation">
             <img class="stop-propagation" src="@($"/img/icons/flag-{CurrentCulture}.svg")" alt="@CurrentCulture">
-            @CurrentCulture - @Localizer["CurrentLanguage"]
+            @CurrentCulture
+             @* - @Localizer["CurrentLanguage"] *@
         </span>
     </div>
     <ul class="list @GetIsOpenCssClass()">

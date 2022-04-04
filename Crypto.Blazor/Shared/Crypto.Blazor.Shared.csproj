@@ -8,5 +8,6 @@
 
   <ItemGroup>
     <SupportedPlatform Include="browser" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.3" />
   </ItemGroup>
 </Project>

@@ -1,13 +1,21 @@
+@using System.Globalization
 <ul class="Currencies">
-    <Currency IconUrl="/img/icons/btc.svg" Label="BTC" Price="R$ 1,00" />
-    <Currency IconUrl="/img/icons/btc.svg" Label="BTC" Price="R$ 1,00" />
-    <Currency IconUrl="/img/icons/btc.svg" Label="BTC" Price="R$ 1,00" />
-    <Currency IconUrl="/img/icons/btc.svg" Label="BTC" Price="R$ 1,00" />
-    <Currency IconUrl="/img/icons/btc.svg" Label="BTC" Price="R$ 1,00" />
-    <Currency IconUrl="/img/icons/btc.svg" Label="BTC" Price="R$ 1,00" />
-    <Currency IconUrl="/img/icons/btc.svg" Label="BTC" Price="R$ 1,00" />
+    @if (Markets != null)
+    {
+        foreach (Market market in Markets)
+        {
+            <Currency 
+                IconUrl="@($"/img/icons/{market.BaseCurrency.ToLower()}.svg")" 
+                Label="@market.BaseCurrency" 
+                Price="@($"R$ {market.Price.ToString("N2")}")" />
+        }
+    }
+    else 
+    {
+        <Error Message="No data found." />
+    }
 </ul>
 
 @code {
-    
+    [Parameter] public IEnumerable<Market>? Markets { get; set; } = null;
 }

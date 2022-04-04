@@ -24,7 +24,9 @@ export default function Home() {
 
     const handleOnClick = useCallback(() => {
         setLoading(true);
-        setRows(getRows());
+        setTimeout(() => {
+            setRows(getRows());
+        }, 10);
     }, [getRows]);
 
     const handleOnAfterRenderRow = () => {
@@ -45,7 +47,7 @@ export default function Home() {
             </Head>
             <div className={styles.container}>
                 <h1>{content[locale].title}</h1>
-                {loading && <p>Calculating...</p>}
+                {loading && <p>{content[locale].running}</p>}
                 {!loading && rows.length <= 0 && (
                     <Button
                         type="button"

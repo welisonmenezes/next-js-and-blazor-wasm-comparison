@@ -2,19 +2,22 @@
     "en": {
         "pageTitle": "Transfero's Dashboard",
         "pageDesc": "Some description in English",
-        "title": "Dashboard",
-        "label": "Run test"
+        "title": "Load test",
+        "label": "Run test",
+        "running": "Running..."
     },
     "es": {
         "pageTitle": "Dashboard de Transfero",
         "pageDesc": "Alguna descripción en español",
-        "title": "Dashboard",
-        "label": "Ejecutar prueba"
+        "title": "Prueba de carga",
+        "label": "Ejecutar prueba",
+        "running": "Corriendo..."
     },
     "pt": {
         "pageTitle": "Dashboard da Transfero",
         "pageDesc": "Alguma descrição em português",
-        "title": "Dashboard",
-        "label": "Executar teste"
+        "title": "Teste de Carga",
+        "label": "Executar teste",
+        "running": "Executando..."
     }
 }

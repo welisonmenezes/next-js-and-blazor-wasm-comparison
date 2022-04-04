@@ -2,11 +2,26 @@
 
 @* <PageTitle>Index</PageTitle> *@
 
+@inject IMarketService MarketService
+
 <div class="Index">
     <Introduction />
-    <Currencies />
+    <Currencies Markets="@Context?.Markets" />
 </div>
 
 @code {
-    
+    [Inject] public AppState? Context { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Context != null && Context.Markets == null)
+        {
+            IEnumerable<Market>? markets = await MarketService.GetMarkets();
+        
+            if (markets != null)
+            {
+                Context.SetMarkets(markets);
+            }
+        }
+    }
 }

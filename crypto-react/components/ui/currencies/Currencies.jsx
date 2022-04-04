@@ -1,10 +1,13 @@
 import { useCallback } from "react";
+import { useRouter } from "next/router";
 import Currency from "./Currency";
 
 import styles from "./Currencies.module.scss";
 import Error from "../Error";
 
 export default function Currencies({ data, error }) {
+    const { locale } = useRouter();
+
     const getCurrencyByName = useCallback((data, name) => {
         return data.filter(
             (element) =>
@@ -14,14 +17,14 @@ export default function Currencies({ data, error }) {
 
     const interestedCurrencies = ["USDC", "USDT", "BTC", "ETH", "SOL", "XLM"];
 
-    let markers = [];
+    let markets = [];
 
     if (!error) {
-        markers = interestedCurrencies.map((element) => {
+        markets = interestedCurrencies.map((element) => {
             return getCurrencyByName(data, element)[0];
         });
 
-        markers.unshift({
+        markets.unshift({
             ticker: "BRZ",
             quoteCurrency: "BRZ",
             baseCurrency: "BRZ",
@@ -32,19 +35,19 @@ export default function Currencies({ data, error }) {
     return (
         <>
             {error && <Error message={error} />}
-            {(!error && !markers) ||
-                (!error && markers.length <= 0 && (
+            {(!error && !markets) ||
+                (!error && markets.length <= 0 && (
                     <Error message="No data found." />
                 ))}
-            {!error && markers && markers.length > 0 && (
+            {!error && markets && markets.length > 0 && (
                 <ul className={styles.container}>
-                    {markers.map((element) => {
+                    {markets.map((element) => {
                         return (
                             <Currency
                                 key={element.ticker}
                                 src={`/icons/${element?.baseCurrency?.toLowerCase()}.svg`}
                                 name={element.baseCurrency}
-                                price={element.price?.toLocaleString("pt-br", {
+                                price={element.price?.toLocaleString(locale, {
                                     style: "currency",
                                     currency: "BRL",
                                 })}
